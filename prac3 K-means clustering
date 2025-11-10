@@ -1,0 +1,163 @@
+# CODE CELL 1
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# --- CODE CELL ---
+# CODE CELL 2
+df=pd.read_csv(r'C:\Users\user\Desktop\Mall_Customers.csv')
+
+# --- CODE CELL ---
+# CODE CELL 3
+df.describe()
+
+# --- CODE CELL ---
+# CODE CELL 4
+df.head()
+
+# --- CODE CELL ---
+# CODE CELL 5
+df.isnull().sum()
+
+# --- CODE CELL ---
+# CODE CELL 6
+df
+
+# --- CODE CELL ---
+# CODE CELL 7
+x=df.iloc[:,3:]
+x
+
+# --- CODE CELL ---
+# CODE CELL 8
+plt.figure(figsize=(8,6))
+plt.title('Unclustered Data')
+plt.xlabel('Annual Income (k$)')
+plt.ylabel('Spending Score (1-100)')
+plt.scatter(x['Annual Income (k$)'],x['Spending Score (1-100)'])
+plt.show()
+
+# --- CODE CELL ---
+# CODE CELL 9
+from sklearn.cluster import KMeans
+from sklearn.metrics import silhouette_score
+
+# --- CODE CELL ---
+# CODE CELL 10
+sse=[]
+for k in range(1,16):
+    km=KMeans(n_clusters=k,random_state=1,n_init=10)
+    km.fit_predict(x)
+    sse.append(km.inertia_)
+
+# --- CODE CELL ---
+# CODE CELL 11
+sse
+
+# --- CODE CELL ---
+# CODE CELL 12
+plt.title('Elbow Method')
+plt.xlabel('K')
+plt.ylabel('SSE')
+plt.plot(range(1,16),sse)
+plt.show()
+
+# --- CODE CELL ---
+# CODE CELL 13
+km=KMeans(n_clusters=5,random_state=1,n_init=10)
+labels=km.fit_predict(x)
+score=silhouette_score(x,labels)
+score
+
+# --- CODE CELL ---
+# CODE 14
+silh=[]
+for k in range(2,16):
+    km=KMeans(n_clusters=k,random_state=1,n_init=10)
+    labels=km.fit_predict(x)
+    score=silhouette_score(x,labels)
+    silh.append(score)
+
+# --- CODE CELL ---
+# CODE CELL 15
+silh
+
+# --- CODE CELL ---
+# CODE CELL 16
+plt.title('Silhouette Scores')
+plt.xlabel('K')
+plt.ylabel('silh')
+plt.plot(range(2,16),silh)
+plt.show()
+
+# --- CODE CELL ---
+# CODE CELL 17
+from sklearn.cluster import AgglomerativeClustering
+
+# --- CODE CELL ---
+# CODE CELL 18
+km=KMeans(n_clusters=5,random_state=1,n_init=10)
+labels=km.fit_predict(x)
+km.labels_
+
+# --- CODE CELL ---
+# CODE CELL 19
+cent=km.cluster_centers_
+
+# --- CODE CELL ---
+# CODE CELL 20
+plt.figure(figsize=(10,7))
+plt.title('Clustered Data')
+plt.xlabel('Annual Income (k$)')
+plt.ylabel('Spending Score (1-100)')
+sns.scatterplot(x=x['Annual Income (k$)'],y=x['Spending Score (1-100)'],c=labels)
+plt.scatter(cent[:,0],cent[:,1],marker='*',c='red',label='Centroids')
+plt.legend()
+plt.show()
+
+# --- CODE CELL ---
+# CODE CELL 21
+df['KMeans_label']=labels
+df.head()
+
+# --- CODE CELL ---
+# CODE CELL 22
+df[labels==0].describe()
+
+# --- CODE CELL ---
+# CODE CELL 23
+df[labels==1].describe()
+
+# --- CODE CELL ---
+# CODE CELL 24
+df[labels==2].describe()
+
+# --- CODE CELL ---
+# CODE CELL 25
+df[labels==3].describe()
+
+# --- CODE CELL ---
+# CODE CELL 26
+df[labels==4].describe()
+
+# --- CODE CELL ---
+# CODE CELL 27
+agl=AgglomerativeClustering(n_clusters=5)
+
+# --- CODE CELL ---
+# CODE CELL 28
+alabels=agl.fit_predict(x)
+alabels
+
+# --- CODE CELL ---
+# CODE CELL 29
+plt.figure(figsize=(16,9))
+plt.subplot(1,2,1)
+plt.title('Agglomerative')
+sns.scatterplot(x=x['Annual Income (k$)'],y=x['Spending Score (1-100)'],c=alabels)
+
+plt.subplot(1,2,2)
+plt.title('KMeans')
+sns.scatterplot(x=x['Annual Income (k$)'],y=x['Spending Score (1-100)'],c=labels)
+plt.show()
