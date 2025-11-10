@@ -1,0 +1,42 @@
+use assign1
+
+db.createCollection("Book")
+
+show collections
+
+db.Book.insert({id:"2236543211", title:"DBMS", author:"S.Sudarshan", dept:"IT", subject:"ADBMS",  price:756.76})
+
+db.Book.insert({id:"223654465876", title:"Designing The User Interface", author:"AlanDix", dept:"IT", subject:"HCI",  price:876.76})
+
+db.Book.find().pretty()
+
+db.Book.remove({title:"DBMS"})
+
+db.Book.find().pretty()
+
+db.Book.update({title:"Designing The User Interface"}, {$set:{subject:"DSP"}})
+
+db.Book.find().pretty()
+
+db.Book.find({price:{$gte:700,$lte:800}}).pretty()
+
+db.Book.find({price:{$gte:800}}).pretty()
+
+db.Book.find({price:{$gte:800}}).count()
+
+db.Book.find({},{_id:0,title:1})
+
+db.Book.find({author:/^A/}).pretty()
+
+db.Book.distinct("dept")
+
+db.Book.findOne(dept:"IT")
+
+db.Book.find({$and:[{author:"AlanDix"},{dept:"IT"}]}).pretty()
+
+//cursor StopIteration
+db.Book.find().pretty().limit(2)
+
+db.Book.find().pretty().skip()
+
+db.Book.find().sort({price:-1}).pretty()
